@@ -61,3 +61,18 @@ print(f"Accuracy: {regression_model_sklearn_accuracy}")
 
 print(f"Coefficient: {regression_model_sklearn.coef_}")
 print(f"Intercept: {regression_model_sklearn.intercept_}")
+
+# Predict the Salary for all test data
+y_predict = regression_model_sklearn.predict(X_test)
+print(f"y_predict: {y_predict}")
+
+# Plot the Salary vs Years of Experience
+plt.scatter(X_train, y_train, color = 'gray')
+plt.plot(X_train, regression_model_sklearn.predict(X_train), color = 'red')
+plt.ylabel('Salary')
+plt.xlabel('Number of Years of Experience')
+plt.title('Salary vs. Years of Experience')
+
+# Predict Salary for 5 YoE
+salary_predicted = regression_model_sklearn.predict([[5]])
+print(f"salary_predicted: {salary_predicted}")
