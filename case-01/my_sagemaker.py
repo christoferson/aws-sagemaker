@@ -44,7 +44,7 @@ print(sagemaker_session._region_name)
 print(sagemaker_session.account_id())
 
 sagemaker_bucket_name = config.aws["sagemaker_bucket_name"]
-sagemaker_bucket_prefix = "linear"
+sagemaker_bucket_prefix = config.aws["sagemaker_bucket_prefix"] #"linear"
 sagemaker_role_arn  = config.aws["sagemaker_role_arn"]
 #execution_role = sagemaker.get_execution_role(sagemaker_session=sagemaker_session)
 #print(execution_role)
@@ -78,7 +78,7 @@ buf = io.BytesIO()
 smac.write_numpy_to_dense_tensor(buf, X_train, y_train)
 buf.seek(0)
 
-s3_client.upload_fileobj(buf, sagemaker_bucket_name, "linear/train/linear-train-data")
+s3_client.upload_fileobj(buf, sagemaker_bucket_name, "{}/train/linear-train-data".format(sagemaker_bucket_prefix))
 s3_train_data = "s3://{}/linear/train/linear-train-data".format(sagemaker_bucket_name)
 print("Tain Data:{}".format(s3_train_data))
 
@@ -96,12 +96,23 @@ print('Training artifacts will be uploaded to: {}'.format(output_location))
 
 container = get_image_uri(config.aws["region_name"], "linear-learner")
 
+"""
 linear = sagemaker.estimator.Estimator(container,
                                        sagemaker_role_arn, 
                                        train_instance_count = 1, 
                                        train_instance_type = 'ml.c4.xlarge',
                                        output_path = output_location,
                                        sagemaker_session = sagemaker_session)
+"""
+linear = sagemaker.estimator.Estimator(container,
+                                       sagemaker_role_arn, 
+                                       train_instance_count = 1, 
+                                       train_instance_type = 'ml.c4.xlarge',
+                                       output_path = output_location,
+                                       sagemaker_session = sagemaker_session,
+                                       train_use_spot_instances = True,
+                                       train_max_run = 300,
+                                       train_max_wait = 600)
 
 linear.set_hyperparameters(feature_dim = 1,
                            predictor_type = 'regressor',
