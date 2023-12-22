@@ -46,6 +46,27 @@ print(unique_sex)
 insurance_df['sex'] = insurance_df['sex'].apply(lambda x: 0 if x == 'female' else 1)
 print(insurance_df.head())
 
+# Check the unique values in the 'smoker' column
+unique_smoker = insurance_df['smoker'].unique()
+print(unique_smoker)
+
+# Convert categorical variable to numerical 
+insurance_df['smoker'] = insurance_df['smoker'].apply(lambda x: 0 if x == 'no' else 1)
+print(insurance_df.head())
+
+# Check unique values in 'region' column
+unique_region = insurance_df['region'].unique()
+print(unique_region)
+
+region_dummies = pd.get_dummies(insurance_df['region'], drop_first = True)
+print(region_dummies)
+
+insurance_df = pd.concat([insurance_df, region_dummies], axis = 1)
+print(insurance_df.head())
+
+# Let's drop the original 'region' column 
+insurance_df.drop(['region'], axis = 1, inplace = True)
+print(insurance_df.head())
 
 #sns.pairplot(insurance_df)
 
