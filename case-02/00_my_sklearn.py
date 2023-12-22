@@ -36,3 +36,27 @@ df_region = insurance_df.groupby(by='region').mean("charges")
 #df_region = insurance_df.groupby(by='region')['charges'].mean()
 #df_region = insurance_df.groupby(by='region').mean().reset_index()
 print(f"{df_region}")
+
+
+# Check unique values in the 'sex' column
+unique_sex = insurance_df['sex'].unique()
+print(unique_sex)
+
+# convert categorical variable sex to numerical. male=0, female=1
+insurance_df['sex'] = insurance_df['sex'].apply(lambda x: 0 if x == 'female' else 1)
+print(insurance_df.head())
+
+
+#sns.pairplot(insurance_df)
+
+# Plot a linear line for age vs charges
+#sns.regplot(x = 'age', y='charges', data=insurance_df)
+#plt.show()
+
+# Plot a linear line for bmi vs charges
+#sns.regplot(x = 'bmi', y='charges', data=insurance_df)
+#plt.show()
+
+
+#correlation = insurance_df.corr()
+#print(correlation)
