@@ -50,7 +50,7 @@ print(insurance_df.head())
 unique_smoker = insurance_df['smoker'].unique()
 print(unique_smoker)
 
-# Convert categorical variable to numerical 
+# Convert categorical variable smoker to numerical. no=0 yes=1
 insurance_df['smoker'] = insurance_df['smoker'].apply(lambda x: 0 if x == 'no' else 1)
 print(insurance_df.head())
 
@@ -58,6 +58,7 @@ print(insurance_df.head())
 unique_region = insurance_df['region'].unique()
 print(unique_region)
 
+# Convert the region to column flags
 region_dummies = pd.get_dummies(insurance_df['region'], drop_first = True)
 print(region_dummies)
 
@@ -68,16 +69,23 @@ print(insurance_df.head())
 insurance_df.drop(['region'], axis = 1, inplace = True)
 print(insurance_df.head())
 
+histogram = insurance_df[['age', 'sex', 'bmi', 'children', 'smoker', 'charges']].hist(bins = 30, figsize = (20,20), color = 'r')
+print(histogram)
+
 #sns.pairplot(insurance_df)
 
 # Plot a linear line for age vs charges
-#sns.regplot(x = 'age', y='charges', data=insurance_df)
-#plt.show()
+sns.regplot(x = 'age', y='charges', data=insurance_df)
+plt.show()
 
 # Plot a linear line for bmi vs charges
 #sns.regplot(x = 'bmi', y='charges', data=insurance_df)
 #plt.show()
 
+correlation = insurance_df.corr()
+print(correlation)
 
-#correlation = insurance_df.corr()
-#print(correlation)
+plt.figure(figsize=(10, 10))
+heatmap = sns.heatmap(correlation, annot=True)
+print(heatmap)
+plt.show()
