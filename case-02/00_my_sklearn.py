@@ -10,6 +10,8 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
 # read the csv file 
 insurance_df = pd.read_csv('case-02/insurance.csv')
@@ -89,3 +91,39 @@ plt.figure(figsize=(10, 10))
 heatmap = sns.heatmap(correlation, annot=True)
 print(heatmap)
 plt.show()
+
+
+#### Training
+
+print(insurance_df.columns)
+
+X = insurance_df.drop(columns =['charges'])
+y = insurance_df['charges']
+print(X)
+print(y)
+
+print(X.shape)
+print(y.shape)
+
+X = np.array(X).astype('float32')
+y = np.array(y).astype('float32')
+
+y = y.reshape(-1,1)
+
+print(X)
+print(X.shape)
+print(y)
+print(y.shape)
+
+X_train, X_test, y_train, y_test = train_test_split( X, y, test_size=0.2, random_state=42)
+
+scaler_x = StandardScaler()
+X_train = scaler_x.fit_transform(X_train)
+X_test = scaler_x.transform(X_test)
+print(X_train.shape)
+print(X_test.shape)
+
+scaler_y = StandardScaler()
+y_train = scaler_y.fit_transform(y_train)
+y_test = scaler_y.transform(y_test)
+
