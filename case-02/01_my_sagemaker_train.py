@@ -95,3 +95,56 @@ print(X_test.shape)
 scaler_y = StandardScaler()
 y_train = scaler_y.fit_transform(y_train)
 y_test = scaler_y.transform(y_test)
+
+###
+
+buf = io.BytesIO() # create an in-memory byte array (buf is a buffer I will be writing to)
+smac.write_numpy_to_dense_tensor(buf, X_train, y_train.reshape(-1))
+buf.seek(0) 
+
+s3_client.upload_fileobj(buf, sagemaker_bucket_name, "{}/train/linear-train-data".format(sagemaker_bucket_prefix))
+s3_train_data = "s3://{}/{}/train/linear-train-data".format(sagemaker_bucket_name, sagemaker_bucket_prefix)
+print("Tain Data:{}".format(s3_train_data))
+
+# Set test data
+buf = io.BytesIO()
+smac.write_numpy_to_dense_tensor(buf, X_test, y_test.reshape(-1))
+buf.seek(0)
+
+s3_client.upload_fileobj(buf, sagemaker_bucket_name, "{}/test/linear-test-data".format(sagemaker_bucket_prefix))
+print("Test Data: s3://{}/{}/test/linear-test-data".format(sagemaker_bucket_name, sagemaker_bucket_prefix))
+
+output_location = 's3://{}/{}/output'.format(sagemaker_bucket_name, sagemaker_bucket_prefix)
+print('Training artifacts will be uploaded to: {}'.format(output_location))
+
+container = get_image_uri(config.aws["region_name"], "linear-learner")
+
+# We have pass in the container, the type of instance that we would like to use for training 
+# output path and sagemaker session into the Estimator. 
+# We can also specify how many instances we would like to use for training
+
+linear = sagemaker.estimator.Estimator(container,
+                                       sagemaker_role_arn, 
+                                       train_instance_count = 1, 
+                                       train_instance_type = 'ml.c4.xlarge',
+                                       output_path = output_location,
+                                       sagemaker_session = sagemaker_session,
+                                       train_use_spot_instances = True,
+                                       train_max_run = 300,
+                                       train_max_wait = 600)
+
+
+# We can tune parameters like the number of features that we are passing in, type of predictor like 'regressor' or 'classifier', mini batch size, epochs
+# Train 32 different versions of the model and will get the best out of them (built-in parameters optimization!)
+
+linear.set_hyperparameters(feature_dim = 8,
+                           predictor_type = 'regressor',
+                           mini_batch_size = 100,
+                           epochs = 100,
+                           num_models = 32,
+                           loss = 'absolute_loss')
+
+
+# Now we are ready to pass in the training data from S3 to train the linear learner model
+
+linear.fit({'train': s3_train_data})
