@@ -10,6 +10,7 @@ import pandas as pd
 import sagemaker.amazon.common as smac
 from sagemaker.amazon.amazon_estimator import get_image_uri
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
 # getting the name of the directory
 # where the this file is present.
@@ -35,3 +36,62 @@ s3_client = session.client("s3")
 
 
 sagemaker_session = sagemaker.Session(boto_session=session)
+
+sagemaker_bucket_name = config.aws["sagemaker_bucket_name"]
+sagemaker_bucket_prefix = "linear-case-02"
+sagemaker_role_arn  = config.aws["sagemaker_role_arn"]
+
+insurance_df = pd.read_csv('case-02/insurance.csv')
+
+insurance_df['sex'] = insurance_df['sex'].apply(lambda x: 0 if x == 'female' else 1)
+print(insurance_df.head())
+
+# Convert categorical variable smoker to numerical. no=0 yes=1
+insurance_df['smoker'] = insurance_df['smoker'].apply(lambda x: 0 if x == 'no' else 1)
+print(insurance_df.head())
+
+# Convert the region to column flags
+region_dummies = pd.get_dummies(insurance_df['region'], drop_first = True)
+print(region_dummies)
+
+insurance_df = pd.concat([insurance_df, region_dummies], axis = 1)
+print(insurance_df.head())
+
+# Let's drop the original 'region' column 
+insurance_df.drop(['region'], axis = 1, inplace = True)
+print(insurance_df.head())
+
+insurance_df.info()
+print(insurance_df)
+
+print(insurance_df.columns)
+
+X = insurance_df.drop(columns =['charges'])
+y = insurance_df['charges']
+#print(X)
+#print(y)
+
+print(X.shape)
+print(y.shape)
+
+X = np.array(X).astype('float32')
+y = np.array(y).astype('float32')
+
+y = y.reshape(-1,1)
+
+#print(X)
+print(X.shape)
+#print(y)
+print(y.shape)
+
+X_train, X_test, y_train, y_test = train_test_split( X, y, test_size=0.2, random_state=42)
+
+scaler_x = StandardScaler()
+X_train = scaler_x.fit_transform(X_train)
+X_test = scaler_x.transform(X_test)
+print(X_train.shape)
+print(X_test.shape)
+
+scaler_y = StandardScaler()
+y_train = scaler_y.fit_transform(y_train)
+y_test = scaler_y.transform(y_test)
