@@ -38,7 +38,7 @@ s3_client = session.client("s3")
 sagemaker_session = sagemaker.Session(boto_session=session)
 
 sagemaker_bucket_name = config.aws["sagemaker_bucket_name"]
-sagemaker_bucket_prefix = "linear-case-02"
+sagemaker_bucket_prefix = config.case02["sagemaker_bucket_prefix"] #"linear-case-02"
 sagemaker_role_arn  = config.aws["sagemaker_role_arn"]
 
 insurance_df = pd.read_csv('case-02/insurance.csv')
