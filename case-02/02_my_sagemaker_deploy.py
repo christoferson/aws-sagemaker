@@ -13,6 +13,7 @@ from sklearn.model_selection import train_test_split
 from sagemaker.serializers import CSVSerializer
 from sagemaker.deserializers import JSONDeserializer
 import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
 from math import sqrt

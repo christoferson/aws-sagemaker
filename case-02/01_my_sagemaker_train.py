@@ -41,6 +41,8 @@ sagemaker_bucket_name = config.aws["sagemaker_bucket_name"]
 sagemaker_bucket_prefix = config.case02["sagemaker_bucket_prefix"] #"linear-case-02"
 sagemaker_role_arn  = config.aws["sagemaker_role_arn"]
 
+###
+
 insurance_df = pd.read_csv('case-02/insurance.csv')
 
 insurance_df['sex'] = insurance_df['sex'].apply(lambda x: 0 if x == 'female' else 1)
