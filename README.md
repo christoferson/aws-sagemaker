@@ -6,8 +6,11 @@ AWS Sagemaker
 pip install --upgrade seaborn
 pip install --upgrade matplotlib
 pip install --upgrade tensorflow
+pip3 install --upgrade torch torchvision torchaudio
 pip install --upgrade scikit-learn
 
+pip install --upgrade pydantic
+pip install --upgrade typing-extensions
 
 
 https://sagemaker.readthedocs.io/en/stable/v2.html
