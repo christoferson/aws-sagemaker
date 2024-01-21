@@ -12,6 +12,10 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, accuracy_score
+from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
+from math import sqrt
 
 # read the csv file 
 insurance_df = pd.read_csv('case-02/insurance.csv')
@@ -127,3 +131,25 @@ scaler_y = StandardScaler()
 y_train = scaler_y.fit_transform(y_train)
 y_test = scaler_y.transform(y_test)
 
+####
+
+regresssion_model_sklearn = LinearRegression()
+regresssion_model_sklearn.fit(X_train, y_train)
+
+regresssion_model_sklearn_accuracy = regresssion_model_sklearn.score(X_test, y_test)
+print(regresssion_model_sklearn_accuracy)
+
+y_predict = regresssion_model_sklearn.predict(X_test)
+
+y_predict_orig = scaler_y.inverse_transform(y_predict)
+y_test_orig = scaler_y.inverse_transform(y_test)
+
+k = X_test.shape[1]
+n = len(X_test)
+print(n)
+
+RMSE = float(format(np.sqrt(mean_squared_error(y_test_orig, y_predict_orig)),'.3f'))
+MSE = mean_squared_error(y_test_orig, y_predict_orig)
+
+#print('RMSE =',RMSE, '\nMSE =',MSE, '\nMAE =',MAE, '\nR2 =', r2, '\nAdjusted R2 =', adj_r2) 
+print('RMSE =',RMSE, '\nMSE =',MSE) 

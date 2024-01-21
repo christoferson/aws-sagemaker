@@ -26,14 +26,15 @@ salary_df.info()
 stats_df = salary_df.describe()
 print(stats_df)
 
-max = salary_df[salary_df['Salary'] == salary_df['Salary'].max()]
-print(f"Max: {max}")
+max_salary = salary_df['Salary'].max()
+max = salary_df[salary_df['Salary'] == max_salary]
+print(f"Max Salary: {max_salary}")
+print(f"MaxRecord: {max}")
 
 min = salary_df[salary_df['Salary'] == salary_df['Salary'].min()]
 print(f"Min: {min}")
 
 hist = salary_df.hist(bins = 30, figsize = (20,10), color = 'r')
-print(hist)
 
 X = salary_df[['YearsExperience']]
 y = salary_df[['Salary']]
@@ -72,6 +73,7 @@ plt.plot(X_train, regression_model_sklearn.predict(X_train), color = 'red')
 plt.ylabel('Salary')
 plt.xlabel('Number of Years of Experience')
 plt.title('Salary vs. Years of Experience')
+#plt.show()
 
 # Predict Salary for 5 YoE
 salary_predicted = regression_model_sklearn.predict([[5]])
