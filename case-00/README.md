@@ -143,6 +143,10 @@ insurance_df[['age', 'sex', 'bmi', 'children', 'smoker', 'charges']]
 insurance_df[['age', 'sex', 'bmi', 'children', 'smoker', 'charges']].hist(bins = 30, figsize = (20,20), color = 'r')
 
 
+### DataFrame - Columns
+
+insurance_df.columns
+
 
 ### DataFrame - Group By
 
@@ -158,3 +162,61 @@ age
 20	0.517241	30.632759	0.862069	0.310345	10159.697736	0.206897	0.241379	0.275862	0.275862
 21	0.535714	28.185714	0.785714	0.071429	4730.464330	0.250000	0.250000	0.250000	0.250000
 ```
+
+
+
+## SageMaker
+
+### Create Sagemaker Session
+
+session = boto3.Session(
+    aws_access_key_id=config.aws["aws_access_key_id"],
+    aws_secret_access_key=config.aws["aws_secret_access_key"],
+    region_name=config.aws["region_name"],
+)
+sagemaker_session = sagemaker.Session(boto_session=session)
+
+### Convert numpy to sagemaker format
+buf = io.BytesIO()
+smac.write_numpy_to_dense_tensor(buf, X_train, y_train)
+buf.seek(0)
+
+### Create the container using the specified image e.g. linera-learner
+
+container = get_image_uri(config.aws["region_name"], "linear-learner")
+session.region_name / boto3.Session()
+
+
+
+linear = sagemaker.estimator.Estimator(container,
+                                       sagemaker_role_arn, 
+                                       train_instance_count = 1, 
+                                       train_instance_type = 'ml.c4.xlarge',
+                                       output_path = output_location,
+                                       sagemaker_session = sagemaker_session,
+                                       train_use_spot_instances = True,
+                                       train_max_run = 300,
+                                       train_max_wait = 600)
+
+
+
+linear.set_hyperparameters(feature_dim = 8,
+                           predictor_type = 'regressor',
+                           mini_batch_size = 100,
+                           epochs = 100,
+                           num_models = 32,
+                           loss = 'absolute_loss')
+
+
+
+linear.fit({'train': s3_train_data})
+
+### Deploy the Model
+
+container = get_image_uri(config.aws["region_name"], "linear-learner")
+
+linear = sagemaker.estimator.Estimator.attach(
+        training_job_name = "linear-learner-2023-12-28-04-45-28-750",
+        sagemaker_session = sagemaker_session)
+
+linear_regressor = linear.deploy(initial_instance_count = 1, instance_type = 'ml.m4.xlarge')
