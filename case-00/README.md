@@ -220,3 +220,13 @@ linear = sagemaker.estimator.Estimator.attach(
         sagemaker_session = sagemaker_session)
 
 linear_regressor = linear.deploy(initial_instance_count = 1, instance_type = 'ml.m4.xlarge')
+
+
+## Case Study
+
+Case-01 Linear Regression - 1 Feature - Employee Salary vs Years of Tenure
+
+Case-02 Linear Regression - Multiple Feature - Insurance Cost vs Gender+Age+Region+Smoking etc.
+
+Case-03 Linear Regression - XG Boost / Extreme Gradient Boost - Weekly Retail Store Sales based on Historical Data
+   - Features (Temperature, Fuel Price, Unemployemnt, Holiday etc.)
