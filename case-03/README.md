@@ -81,3 +81,17 @@ To calculate the prediction values, Previous prediction + Learning Rate e.g. 0.2
 Learning Rate is use to slow down the pace, add gradient to the boosting. This is to avoid overfitting.
 5. Repeat until satisfied
 
+##### Sagemaker XGBoost Implementation
+
+- Uses tabular data for input and output
+  - A row represents an observation
+  - A column represents output or target label
+  - The rest of the columns represent input features
+
+- Supported file format. Note protobuf not supported
+  - CSV
+  - libsvm
+
+- XGBoost is memory intensive and not so much on compute. M4 general purpose is recommended.
+
+
